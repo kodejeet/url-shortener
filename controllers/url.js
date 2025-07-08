@@ -11,8 +11,10 @@ async function handleGenerateNewShortURL(req, res) {
     visitHistory: [],
     createdBy: req.user._id,
   });
+  const allUrls = await URL.find({ createdBy: req.user._id });
   return res.render("html", {
     id: shortID,
+    urls: allUrls,
   });
 }
 
@@ -29,3 +31,4 @@ module.exports = {
   handleGenerateNewShortURL,
   handleGetAnalytics,
 };
+
