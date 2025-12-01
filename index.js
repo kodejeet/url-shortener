@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const { connectToMongoDB } = require("./connect");
@@ -15,9 +16,16 @@ const userRoute = require("./routes/user");
 const app = express();
 const PORT = 8001;
 
-connectToMongoDB("mongodb://127.0.0.1:27017/url-shortner").then(() =>
-  console.log("MongoDB connected")
-);
+// connectToMongoDB("mongodb://127.0.0.1:27017/url-shortner").then(() =>
+//   console.log("MongoDB connected")
+// );
+
+connectToMongoDB()
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+    process.exit(1);
+  });
 
 
 app.set("view engine", "ejs");
