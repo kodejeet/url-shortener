@@ -1,26 +1,62 @@
-const {v4: uuidv4} = require('uuid')
+const { v4: uuidv4 } = require("uuid");
 
 const User = require("../models/user");
 const URL = require("../models/url");
-const {setUser} = require("../service/auth") 
+const { setUser } = require("../service/auth");
 
 async function handleUserSignup(req, res) {
-  const { name, email, password } = req.body;
-  await User.create({ name, email, password });
-  return res.redirect("/login");
+  try {
+    const { name, email, password } = req.body;
+
+    console.log("Signup req.body:", req.body);
+
+    if (!name || !email || !password) {
+      return res.status(400).send("All fields are required");
+    }
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).send("User already exists with this email");
+    }
+
+    await User.create({ name, email, password });
+
+    return res.redirect("/login");
+  } catch (err) {
+    console.error("Signup error:", err);
+    return res.status(500).send("Internal Server Error during signup");
+  }
 }
 
 async function handleUserLogin(req, res) {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email, password });
-  if (!user)
-    return res.render("login", {
-      error: "Invalid Username or Password",
-    });
+  try {
+    const { email, password } = req.body;
+
+    console.log("Login req.body:", req.body);
+
+    if (!email || !password) {
+      return res.status(400).render("login", {
+        error: "Email and password are required",
+      });
+    }
+
+    const user = await User.findOne({ email, password });
+
+    if (!user) {
+      return res.status(401).render("login", {
+        error: "Invalid Username or Password",
+      });
+    }
 
     const token = setUser(user);
-    res.cookie('uid', token);
-  return res.redirect("/");
+    res.cookie("uid", token);
+
+    return res.redirect("/");
+  } catch (err) {
+    console.error("Login error:", err);
+    return res.status(500).send("Internal Server Error during login");
+  }
 }
 
 module.exports = {
