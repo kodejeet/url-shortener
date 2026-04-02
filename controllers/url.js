@@ -11,10 +11,13 @@ async function handleGenerateNewShortURL(req, res) {
     visitHistory: [],
     createdBy: req.user._id,
   });
+  const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+  const baseUrl = `${protocol}://${req.get("host")}`;
   const allUrls = await URL.find({ createdBy: req.user._id });
   return res.render("html", {
     id: shortID,
     urls: allUrls,
+    baseUrl: baseUrl,
   });
 }
 

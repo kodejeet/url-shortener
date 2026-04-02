@@ -5,9 +5,12 @@ const URL = require("../models/url");
 
 router.get("/", async(req, res) => {
   if(!req.user) return res.redirect('/login')
+    const protocol = req.headers["x-forwarded-proto"] || req.protocol;
+    const baseUrl = `${protocol}://${req.get("host")}`;
     const allUrls = await URL.find({ createdBy: req.user._id });
   return res.render("html", {
-    urls: allUrls
+    urls: allUrls,
+    baseUrl: baseUrl,
   });
 });
 
