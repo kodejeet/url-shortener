@@ -2,6 +2,8 @@
 
 A simple and fast URL shortener built using Node.js, Express, and MongoDB with server-side rendering via EJS.
 
+![Demo](assets/demo.png)
+
 ---
 
 ## Features
