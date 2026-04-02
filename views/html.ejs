@@ -94,7 +94,9 @@
                   <tr>
                     <td class="col-num"><%= index + 1 %></td>
                     <td class="col-short"><%= url.shortId %></td>
-                    <td class="col-redirect" title="<%= url.redirectURL %>"><%= url.redirectURL %></td>
+                    <td class="col-redirect" title="<%= baseUrl %>/<%= url.shortId %>">
+                      <a href="<%= baseUrl %>/<%= url.shortId %>" target="_blank"><%= baseUrl %>/<%= url.shortId %></a>
+                    </td>
                     <td class="col-clicks"><%= url.visitHistory.length %></td>
                     <td class="col-date">
                       <%= url.createdAt ? new Date(url.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '-' %>
