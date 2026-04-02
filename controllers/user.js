@@ -11,13 +11,17 @@ async function handleUserSignup(req, res) {
     console.log("Signup req.body:", req.body);
 
     if (!name || !email || !password) {
-      return res.status(400).send("All fields are required");
+      return res.status(400).render("signup", {
+        error: "All fields are required",
+      });
     }
 
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      return res.status(400).send("User already exists with this email");
+      return res.status(400).render("signup", {
+        error: "An account with this email already exists",
+      });
     }
 
     await User.create({ name, email, password });
@@ -25,7 +29,9 @@ async function handleUserSignup(req, res) {
     return res.redirect("/login");
   } catch (err) {
     console.error("Signup error:", err);
-    return res.status(500).send("Internal Server Error during signup");
+    return res.status(500).render("signup", {
+      error: "Something went wrong. Please try again.",
+    });
   }
 }
 
@@ -55,7 +61,9 @@ async function handleUserLogin(req, res) {
     return res.redirect("/");
   } catch (err) {
     console.error("Login error:", err);
-    return res.status(500).send("Internal Server Error during login");
+    return res.status(500).render("login", {
+      error: "Something went wrong. Please try again.",
+    });
   }
 }
 

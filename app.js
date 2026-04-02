@@ -34,10 +34,16 @@ app.set("views", path.resolve("./views"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/url", restrictToLoggedInUsersOnly, urlRoute);
 app.use("/user", userRoute);
 app.use("/", checkAuth, staticRoute);
+
+app.get("/logout", (req, res) => {
+  res.clearCookie("uid");
+  return res.redirect("/login");
+});
 
 app.get("/:shortId", async (req, res) => {
   const shortID = req.params.shortId;

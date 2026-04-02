@@ -1,54 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <style>
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      }
-    </style>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
-  </head>
-  <body>
-    <h1>Url Shortner</h1>
-    <% if (locals.id) { %>
-    <p>
-      URL Generated:
-      <a href="<%= baseUrl %>/<%= id %>" target="_blank">
-        <%= baseUrl %>/<%= id %>
-      </a>
-    </p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Dashboard - Manage and track your shortened URLs." />
+  <title>Dashboard - Shorty</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="dashboard">
 
-    <% } %>
-    <div>
-      <form method="POST" action="/url">
-        <label>Enter Your Original URL</label>
-        <input type="text" name="url" placeholder="https://vercel.xyz" />
-        <button type="submit">Generate</button>
-      </form>
-    </div>
-    <div>
-      <% if (locals.urls) { %>
-      <table>
-        <thead>
-          <th>Sl. No.</th>
-          <th>ShortID</th>
-          <th>Redirect</th>
-          <th>Clicks</th>
-        </thead>
-        <tbody>
-          <% urls.forEach((url, index) => { %>
-          <tr>
-            <td><%= index + 1 %></td>
-            <td><%= url.shortId %></td>
-            <td><%= url.redirectURL %></td>
-            <td><%= url.visitHistory.length %></td>
-          </tr>
-          <% }) %>
-        </tbody>
-      </table>
+    <header class="topbar">
+      <div class="brand">shorty<span>.</span></div>
+      <div class="topbar-right">
+        <% if (locals.userName) { %>
+          <span class="topbar-user"><%= userName %></span>
+        <% } %>
+        <a href="/logout" class="btn-logout">Sign Out</a>
+      </div>
+    </header>
+
+    <main class="dashboard-content">
+
+      <% if (locals.urls && urls.length > 0) { %>
+        <%
+          var totalClicks = 0;
+          urls.forEach(function(u) { totalClicks += u.visitHistory.length; });
+        %>
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Total Links</div>
+            <div class="stat-value"><%= urls.length %></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Clicks</div>
+            <div class="stat-value"><%= totalClicks %></div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg. Clicks</div>
+            <div class="stat-value"><%= urls.length > 0 ? (totalClicks / urls.length).toFixed(1) : '0' %></div>
+          </div>
+        </div>
       <% } %>
-    </div>
-  </body>
+
+      <section class="url-section">
+        <h2>Shorten a URL</h2>
+        <form method="POST" action="/url">
+          <div class="url-form-row">
+            <input
+              type="url"
+              id="url-input"
+              name="url"
+              placeholder="Paste a long URL here..."
+              required
+              autocomplete="url"
+            />
+            <button type="submit" class="btn-primary">Shorten</button>
+          </div>
+        </form>
+      </section>
+
+      <% if (locals.id) { %>
+        <div class="generated-url" id="generated-url-banner">
+          <div>
+            <div class="label">Your shortened link</div>
+            <a class="short-link" href="<%= baseUrl %>/<%= id %>" target="_blank" id="short-url-text">
+              <%= baseUrl %>/<%= id %>
+            </a>
+          </div>
+          <button class="btn-copy" id="btn-copy" onclick="copyUrl()">Copy</button>
+        </div>
+      <% } %>
+
+      <section class="table-section">
+        <h3>Your Links</h3>
+        <% if (locals.urls && urls.length > 0) { %>
+          <div class="table-wrap">
+            <table class="url-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Short ID</th>
+                  <th>Destination</th>
+                  <th>Clicks</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% urls.forEach(function(url, index) { %>
+                  <tr>
+                    <td class="col-num"><%= index + 1 %></td>
+                    <td class="col-short"><%= url.shortId %></td>
+                    <td class="col-redirect" title="<%= url.redirectURL %>"><%= url.redirectURL %></td>
+                    <td class="col-clicks"><%= url.visitHistory.length %></td>
+                    <td class="col-date">
+                      <%= url.createdAt ? new Date(url.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '-' %>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } else { %>
+          <div class="empty-state">
+            <p>No links yet.</p>
+            <p class="sub">Shorten your first URL above to get started.</p>
+          </div>
+        <% } %>
+      </section>
+
+    </main>
+
+  </div>
+
+  <script>
+    function copyUrl() {
+      var text = document.getElementById('short-url-text').textContent.trim();
+      navigator.clipboard.writeText(text).then(function() {
+        var btn = document.getElementById('btn-copy');
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
 </html>
