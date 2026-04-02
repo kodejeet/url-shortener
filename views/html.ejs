@@ -76,7 +76,14 @@
       <% } %>
 
       <section class="table-section">
-        <h3>Your Links</h3>
+        <div class="table-header-row">
+          <h3>Your Links</h3>
+          <% if (locals.urls && urls.length > 0) { %>
+            <form method="POST" action="/url/clear-all" class="clear-form">
+              <button type="submit" class="btn-clear" onclick="return confirm('This will delete all your shortened links. Continue?')">Clear All</button>
+            </form>
+          <% } %>
+        </div>
         <% if (locals.urls && urls.length > 0) { %>
           <div class="table-wrap">
             <table class="url-table">
@@ -87,6 +94,7 @@
                   <th>Destination</th>
                   <th>Clicks</th>
                   <th>Created</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -100,6 +108,9 @@
                     <td class="col-clicks"><%= url.visitHistory.length %></td>
                     <td class="col-date">
                       <%= url.createdAt ? new Date(url.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '-' %>
+                    </td>
+                    <td class="col-action">
+                      <button class="btn-copy-row" onclick="copyRow(this, '<%= baseUrl %>/<%= url.shortId %>')">Copy</button>
                     </td>
                   </tr>
                 <% }) %>
@@ -123,6 +134,17 @@
       var text = document.getElementById('short-url-text').textContent.trim();
       navigator.clipboard.writeText(text).then(function() {
         var btn = document.getElementById('btn-copy');
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    function copyRow(btn, url) {
+      navigator.clipboard.writeText(url).then(function() {
         btn.textContent = 'Copied';
         btn.classList.add('copied');
         setTimeout(function() {

@@ -485,6 +485,70 @@ a:hover {
   font-size: 0.8rem;
 }
 
+.table-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.table-header-row h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0;
+}
+
+.clear-form {
+  margin: 0;
+}
+
+.btn-clear {
+  padding: 0.35rem 0.75rem;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-clear:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: rgba(196, 92, 92, 0.06);
+}
+
+.col-action {
+  width: 70px;
+  text-align: center;
+}
+
+.btn-copy-row {
+  padding: 0.3rem 0.6rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-copy-row:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-copy-row.copied {
+  border-color: var(--success);
+  color: var(--success);
+}
 
 /* STATS ROW */
 
