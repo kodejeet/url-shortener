@@ -393,7 +393,8 @@ a:hover {
 .table-wrap {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .url-table {
